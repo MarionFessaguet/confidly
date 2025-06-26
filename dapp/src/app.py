@@ -60,7 +60,7 @@ def process_data(parsed_content):
     descriptions = [entry["description"] for entry in parsed_content]
     print("Descriptions:", descriptions)
     # TODO Call ChatGPT api
-    prompt = f"""
+    prompt = """
 I'm giving you some article content and the instructions will come just after.
 New article content:
 ```
@@ -88,7 +88,7 @@ New article content:
    "0": "https://img-4.linternaute.com/mZzMeIW6-NwGfAYVa-5g2t4lNEg=/1080x/smart/3f4c560443a6452fac2676cf0c1e57c0/ccmcms-linternaute/45964290.jpg"
   },
   "title": "Météo",
-  "description": "Canicule et orage, c’est la loose",
+  "description": "Canicule et orage, c'est la loose",
   "locale": "fr",
   "emotion": "il fait trop chaud!"
  }

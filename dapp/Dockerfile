@@ -1,4 +1,4 @@
-FROM python-ollama-llava-7b:local
+FROM python-ollama-qwen3-8b:local
 
 WORKDIR /app
 
