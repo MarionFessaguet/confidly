@@ -1,4 +1,4 @@
-FROM python-ollama-qwen3-8b:local
+FROM aghia/python-ollama-qwen3:8b
 
 WORKDIR /app
 

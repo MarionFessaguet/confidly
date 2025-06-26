@@ -7,6 +7,7 @@ import requests
 import base64
 import protected_data
 import asyncio
+import re
 
 IEXEC_OUT = os.getenv('IEXEC_OUT')
 
@@ -20,7 +21,7 @@ def get_app_secret():
         print(f"Got an app secret ({redacted_app_secret})!")
     else:
         print("App secret is not set")
-    return chatGptApiKey
+    return chatGptApiKey 
 
 def parse_protected_data(json_string):
     try:
@@ -58,22 +59,9 @@ def query_ollama_text(prompt):
 
 
 def extract_html_content(text):
-    """
-    Extract HTML content between ```html and ``` markers.
-    Args:
-        text (str): The text containing HTML code blocks
-    Returns:
-        str: The extracted HTML content, or empty string if not found
-    """
-    # Pattern to match content between ```html and ```
-    pattern = r'```html\s*(.*?)\s*```'
-    # Find all matches
-    matches = re.findall(pattern, text, re.DOTALL)
-    if matches:
-        # Return the first match (or join all if you want multiple blocks)
-        return matches[0].strip()
-    else:
-        return ""
+    """Extracts the HTML content between <!DOCTYPE html> and </html>."""
+    match = re.search(r'<!DOCTYPE html>.*?</html>', text, re.DOTALL | re.IGNORECASE)
+    return match.group(0) if match else None
 
 def extract_articles_and_images(articles):
     """
@@ -194,6 +182,23 @@ def send_email_with_mailjet(recipients, subject, text_content, html_content=None
             
     except Exception as e:
         return {"success": False, "error": str(e)}
+
+def build_prompt(articles):
+    intro = """
+I'm giving you some article content and the instructions will come just after.
+"""
+    
+    article_blocks = ""
+    for article in articles:
+        json_article = json.dumps(article, indent=2, ensure_ascii=False)
+        article_blocks += f'\nNew article content:\n```\n{json_article}\n```\n'
+
+    instructions = """
+Now I want you to generate a kind of journal with this list of articles, each representing different event or memories of different authors. you need to consider them unrelated. The journal language will be "EN" so translate the article content when needed. The journal will be generated in HTML format in a single page following all instructions. The theme of the journal should be "familly time for a summer party". You need to be really creative like a designer and make effort to make it look nice and fresh. Each article will represent an event. You are allowed to enhance the description to make them match the journal entry. Each article will be represented in a JSON format. You can ignore the "v" field. The "date" field contains the date or datetime of the event. The "locale" field represents the language used for writing the content of the "title" and "description". You can find an "emotion" field expressing what the author was feeling when the event occurred. Use it for your customization of the tone of this journal entry but do not display it back. The "images" field is a list of images URL an dyou should them all in the generate ouput. if necessary pick one as the main on and siplay the other at the end of the article. The "location" field represents the location of the event if filled.
+Please generate the journal in a local html and let me download it.
+"""
+
+    return (intro + article_blocks + instructions).strip()
     
 
 def process_data(parsed_content):
@@ -204,43 +209,8 @@ def process_data(parsed_content):
     articles, image_map = extract_articles_and_images(parsed_content) #parsed_content = list of protected data
 
     #prompt to be modified according to protected data
-    prompt = """
-I'm giving you some article content and the instructions will come just after.
-New article content:
-```
-{
-  "v": "1",
-  "datetime": "2025-06-26",
-  "location": "Lyon, France",
-  "images": {
-   "0": "https://cf.ltkcdn.net/family/images/std/200821-800x533r1-family.jpg",
-   "1": "https://www.udel.edu/academics/colleges/canr/cooperative-extension/fact-sheets/building-strong-family-relationships/_jcr_content/par_udel/columngenerator/par_1/image.coreimg.jpeg/1718801838338/family.jpeg"
-  }
-  "title": "Hackathon",
-  "description": "1ère journée au hackathon, ca démarre fort!",
-  "locale": "fr",
-  "emotion": "fun"
- }
-```
-New article content:
-```
-{
-  "v": "1",
-  "datetime": "2025-06-25",
-  "location": "Villeurbanne, France",
-  "images": {
-   "0": "https://img-4.linternaute.com/mZzMeIW6-NwGfAYVa-5g2t4lNEg=/1080x/smart/3f4c560443a6452fac2676cf0c1e57c0/ccmcms-linternaute/45964290.jpg"
-  },
-  "title": "Météo",
-  "description": "Canicule et orage, c'est la loose",
-  "locale": "fr",
-  "emotion": "il fait trop chaud!"
- }
-```
-Now I want you to generate a kind of journal with this list of articles, each representing different event or memories of different authors. you need to consider them unrelated. The journal language will be "EN" so translate the article content when needed. The journal will be generated in HTML format in a single page following all instructions. The theme of the journal should be "familly time for a summer party". You need to be really creative like a designer and make effort to make it look nice and fresh. Each article will represent an event. You are allowed to enhance the description to make them match the journal entry. Each article will be represented in a JSON format. You can ignore the "v" field. The "date" field contains the date or datetime of the event. The "locale" field represents the language used for writing the content of the "title" and "description". You can find an "emotion" field expressing what the author was feeling when the event occurred. Use it for your customization of the tone of this journal entry but do not display it back. The "images" field is a list of images URL an dyou should them all in the generate ouput. if necessary pick one as the main on and siplay the other at the end of the article. The "location" field represents the location of the event if filled.
-Please generate the journal in a html code.
-Give me only the html file content and nothing else!
-    """
+    
+    prompt = build_prompt(articles)
     result = query_ollama_text(prompt)
     curated_result = extract_html_content(result)
     print("Curated result from Ollama:", curated_result)
@@ -248,7 +218,7 @@ Give me only the html file content and nothing else!
     replace_mapped_urls_in_html(curated_result, image_map) 
 
     #gener pdf
-    generate_pdf_from_html(html_content, pdf_path)
+    #generate_pdf_from_html(curated_result, pdf_path)
 
     return curated_result
 
@@ -256,14 +226,41 @@ def main():
     computed_json = {}
     try:
         print("Starting Condidly dapp...")
-        get_app_secret()
-        parsed_data = parse_protected_data(protected_data.get("memories.json"))
+        #get_app_secret()
+        #parsed_data = parse_protected_data(protected_data.get("memories.json"))
+        parsed_data = [
+            {
+                "v": "1",
+                "datetime": "2025-06-26",
+                "location": "Lyon, France",
+                "images": {
+                    "0": "https://cf.ltkcdn.net/family/images/std/200821-800x533r1-family.jpg",
+                    "1": "https://www.udel.edu/academics/colleges/canr/cooperative-extension/fact-sheets/building-strong-family-relationships/_jcr_content/par_udel/columngenerator/par_1/image.coreimg.jpeg/1718801838338/family.jpeg"
+                },
+                "title": "Hackathon",
+                "description": "1ère journée au hackathon, ca démarre fort!",
+                "locale": "fr",
+                "emotion": "fun"
+            },
+            {
+                "v": "1",
+                "datetime": "2025-06-25",
+                "location": "Villeurbanne, France",
+                "images": {
+                    "0": "https://img-4.linternaute.com/mZzMeIW6-NwGfAYVa-5g2t4lNEg=/1080x/smart/3f4c560443a6452fac2676cf0c1e57c0/ccmcms-linternaute/45964290.jpg"
+                },
+                "title": "Météo",
+                "description": "Canicule et orage, c’est la loose",
+                "locale": "fr",
+                "emotion": "il fait trop chaud!"
+            }
+        ]
         start_ollama_server()
-        # response = process_data(parsed_data)
-        response = "dummy response for testing purposes"
-        with open(IEXEC_OUT + '/result.txt', 'w') as f:
+        response = process_data(parsed_data)
+        # response = "dummy response for testing purposes"
+        with open(IEXEC_OUT + '/result.html', 'w') as f:
             f.write(response)
-        computed_json = {'deterministic-output-path': IEXEC_OUT + '/result.txt'}
+        computed_json = {'deterministic-output-path': IEXEC_OUT + '/result.html'}
     except Exception as e:
         print(e)
         computed_json = {'deterministic-output-path': IEXEC_OUT,
