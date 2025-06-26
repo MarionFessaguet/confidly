@@ -55,6 +55,25 @@ def query_ollama_text(prompt):
     except Exception as e:
         return f"Error: {str(e)}"
 
+
+def extract_html_content(text):
+    """
+    Extract HTML content between ```html and ``` markers.
+    Args:
+        text (str): The text containing HTML code blocks
+    Returns:
+        str: The extracted HTML content, or empty string if not found
+    """
+    # Pattern to match content between ```html and ```
+    pattern = r'```html\s*(.*?)\s*```'
+    # Find all matches
+    matches = re.findall(pattern, text, re.DOTALL)
+    if matches:
+        # Return the first match (or join all if you want multiple blocks)
+        return matches[0].strip()
+    else:
+        return ""
+
 def process_data(parsed_content):
     # Get description from all memories
     # descriptions = [entry["description"] for entry in parsed_content]
@@ -97,7 +116,9 @@ Please generate the journal in a html code.
 Give me only the html file content and nothing else!
     """
     result = query_ollama_text(prompt)
-    print("Result from Ollama:", result)
+    curated_result = extract_html_content(result)
+
+    print("Curated result from Ollama:", curated_result)
     return result
 
 def main():
