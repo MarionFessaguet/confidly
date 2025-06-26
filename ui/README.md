@@ -29,7 +29,7 @@ Application de gestion de souvenirs personnels utilisant la technologie iExec po
 ```bash
 # Cloner le repository
 git clone git@github.com:MarionFessaguet/confidly.git
-cd confidly
+cd confidly/ui
 
 # Installer les dépendances
 npm ci
