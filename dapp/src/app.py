@@ -6,6 +6,7 @@ import threading
 import requests
 import base64
 import protected_data
+import asyncio
 
 IEXEC_OUT = os.getenv('IEXEC_OUT')
 
@@ -55,10 +56,154 @@ def query_ollama_text(prompt):
     except Exception as e:
         return f"Error: {str(e)}"
 
+
+def extract_html_content(text):
+    """
+    Extract HTML content between ```html and ``` markers.
+    Args:
+        text (str): The text containing HTML code blocks
+    Returns:
+        str: The extracted HTML content, or empty string if not found
+    """
+    # Pattern to match content between ```html and ```
+    pattern = r'```html\s*(.*?)\s*```'
+    # Find all matches
+    matches = re.findall(pattern, text, re.DOTALL)
+    if matches:
+        # Return the first match (or join all if you want multiple blocks)
+        return matches[0].strip()
+    else:
+        return ""
+
+def extract_articles_and_images(articles):
+    """
+    Process articles and their images, creating a mapping of image URLs.
+    Converts the PHP-like code to Python.
+    """
+    image_map = {}  # Python equivalent of map = array()
+    for article in articles:
+        if 'images' in article and isinstance(article['images'], list):
+            for n, image in enumerate(article['images']):
+                key = f'https://foo.bar/{len(image_map)}'
+                image_map[key] = image
+                article['images'][n] = key
+    return articles, image_map
+
+def replace_mapped_urls_in_html(html_content, image_map):
+    """
+    Replace mapped URLs back to their original values in HTML content.
+    Converts the PHP foreach loop to Python.
+    """
+    for key, value in image_map.items():
+        html_content = html_content.replace(key, value)
+    return html_content
+
+async def generate_pdf_from_html(html_content, pdf_path):
+    browser = await launch()
+    page = await browser.newPage()
+    
+    await page.setContent(html_content)
+    
+    await page.pdf({'path': pdf_path, 'format': 'A4'})
+    
+    await browser.close()
+
+def send_email_with_mailjet(recipients, subject, text_content, html_content=None, attachment_path=None, 
+                           sender_email=None, sender_name=None, api_key=None, api_secret=None):
+    """
+    Send an email with optional attachment using Mailjet API.
+    
+    Args:
+        recipients (list): List of recipient email addresses
+        subject (str): Email subject line
+        text_content (str): Plain text email content
+        html_content (str): HTML email content (optional)
+        attachment_path (str): Path to file to attach (optional)
+        sender_email (str): Sender's email address
+        sender_name (str): Sender's name
+        api_key (str): Mailjet API key
+        api_secret (str): Mailjet API secret
+        
+    Returns:
+        dict: Status of the email sending operation
+    """
+    try:
+        # Check if attachment exists
+        attachment_data = None
+        attachment_name = None
+        if attachment_path and os.path.exists(attachment_path):
+            with open(attachment_path, "rb") as file:
+                attachment_data = base64.b64encode(file.read()).decode('utf-8')
+                attachment_name = os.path.basename(attachment_path)
+        elif attachment_path:
+            return {"success": False, "error": f"Attachment file not found: {attachment_path}"}
+        
+        # Prepare recipients list
+        to_emails = [{"Email": email} for email in recipients]
+        
+        # Prepare email data
+        email_data = {
+            "Messages": [
+                {
+                    "From": {
+                        "Email": sender_email,
+                        "Name": sender_name or sender_email
+                    },
+                    "To": to_emails,
+                    "Subject": subject,
+                    "TextPart": text_content
+                }
+            ]
+        }
+        
+        # Add HTML content if provided
+        if html_content:
+            email_data["Messages"][0]["HTMLPart"] = html_content
+        
+        # Add attachment if provided
+        if attachment_data:
+            email_data["Messages"][0]["Attachments"] = [
+                {
+                    "ContentType": "application/octet-stream",
+                    "Filename": attachment_name,
+                    "Base64Content": attachment_data
+                }
+            ]
+        
+        # Send email via Mailjet API
+        url = "https://api.mailjet.com/v3.1/send"
+        auth = (api_key, api_secret)
+        headers = {"Content-Type": "application/json"}
+        
+        response = requests.post(url, json=email_data, auth=auth, headers=headers)
+        
+        if response.status_code == 200:
+            result = response.json()
+            return {
+                "success": True,
+                "message": f"Email sent successfully to {len(recipients)} recipients",
+                "recipients": recipients,
+                "mailjet_response": result,
+                "attachment": attachment_name
+            }
+        else:
+            return {
+                "success": False, 
+                "error": f"Mailjet API error: {response.status_code} - {response.text}"
+            }
+            
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+    
+
 def process_data(parsed_content):
     # Get description from all memories
     # descriptions = [entry["description"] for entry in parsed_content]
     # print("Descriptions:", descriptions)
+
+    articles, image_map = extract_articles_and_images(parsed_content) #parsed_content = list of protected data
+
+    #prompt to be modified according to protected data
     prompt = """
 I'm giving you some article content and the instructions will come just after.
 New article content:
@@ -97,8 +242,15 @@ Please generate the journal in a html code.
 Give me only the html file content and nothing else!
     """
     result = query_ollama_text(prompt)
-    print("Result from Ollama:", result)
-    return result
+    curated_result = extract_html_content(result)
+    print("Curated result from Ollama:", curated_result)
+
+    replace_mapped_urls_in_html(curated_result, image_map) 
+
+    #gener pdf
+    generate_pdf_from_html(html_content, pdf_path)
+
+    return curated_result
 
 def main():
     computed_json = {}
