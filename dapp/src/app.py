@@ -57,9 +57,8 @@ def query_ollama_text(prompt):
 
 def process_data(parsed_content):
     # Get description from all memories
-    descriptions = [entry["description"] for entry in parsed_content]
-    print("Descriptions:", descriptions)
-    # TODO Call ChatGPT api
+    # descriptions = [entry["description"] for entry in parsed_content]
+    # print("Descriptions:", descriptions)
     prompt = """
 I'm giving you some article content and the instructions will come just after.
 New article content:
@@ -108,7 +107,8 @@ def main():
         get_app_secret()
         parsed_data = parse_protected_data(protected_data.get("memories.json"))
         start_ollama_server()
-        response = process_data(parsed_data)
+        # response = process_data(parsed_data)
+        response = "dummy response for testing purposes"
         with open(IEXEC_OUT + '/result.txt', 'w') as f:
             f.write(response)
         computed_json = {'deterministic-output-path': IEXEC_OUT + '/result.txt'}
