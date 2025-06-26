@@ -1,4 +1,4 @@
-FROM aghia/python-ollama-llava:7b
+FROM aghia/local
 
 WORKDIR /app
 

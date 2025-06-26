@@ -47,7 +47,6 @@ def query_ollama_vision(prompt, image_path):
     except Exception as e:
         return f"Error: {str(e)}"
 
-
 def main():
     IEXEC_OUT = os.getenv('IEXEC_OUT')
     computed_json = {}
@@ -60,8 +59,8 @@ def main():
         try:
             # The protected data mock created for the purpose of this Hello World journey
             # contains an object with a key "secretText" which is a string
-            protected_text = protected_data.getValue('secretText', 'string')
-            messages.append(protected_text)
+            protected_data_content = protected_data.getValue('secretText', 'string')
+            messages.append(protected_data_content)
         except Exception as e:
             print('It seems there is an issue with your protected data:', e)
         # YOUR task:
