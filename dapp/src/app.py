@@ -47,31 +47,38 @@ def query_ollama_vision(prompt, image_path):
     except Exception as e:
         return f"Error: {str(e)}"
 
+def parse_protected_data(json_data):
+    """Parse the protected data JSON and return a dictionary"""
+    try:
+        return json.loads(json_data)
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Invalid JSON data: {e}")
+
+def process_data(parsed_content):
+    # Get description from all memories
+    descriptions = [entry["description"] for entry in parsed_content]
+    print("Descriptions:", descriptions)
+
+    return "Ok"
+
 def main():
     IEXEC_OUT = os.getenv('IEXEC_OUT')
     computed_json = {}
     try:
-        messages = []
-        args = sys.argv[1:]
-        print(f"Received {len(args)} args")
-        if len(args) > 0:
-            messages.append(" ".join(args))
+        print("Starting Condidly dapp...")
         try:
-            # The protected data mock created for the purpose of this Hello World journey
-            # contains an object with a key "secretText" which is a string
-            protected_data_content = protected_data.getValue('secretText', 'string')
-            messages.append(protected_data_content)
+            parsed_content = parse_protected_data(protected_data.get("memories.json"))
+            response = process_data(parsed_content)
         except Exception as e:
             print('It seems there is an issue with your protected data:', e)
         # YOUR task:
         # Start server in background
-        server_thread = threading.Thread(target=start_ollama_server, daemon=True)
-        server_thread.start()
-        time.sleep(5)
-        text_response = query_ollama_text("Do you know iExec ?")
-        #print(f"Response: {text_response}")
+        # server_thread = threading.Thread(target=start_ollama_server, daemon=True)
+        # server_thread.start()
+        # time.sleep(5)
+        # text_response = query_ollama_text("Do you know iExec ?")
         with open(IEXEC_OUT + '/result.txt', 'w') as f:
-            f.write(text_response)
+            f.write(response)
         computed_json = {'deterministic-output-path': IEXEC_OUT + '/result.txt'}
     except Exception as e:
         print(e)
