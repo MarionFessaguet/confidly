@@ -7,3 +7,5 @@ output
 
 # python virtual env
 .venv
+
+.env

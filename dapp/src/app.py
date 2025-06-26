@@ -1,94 +1,124 @@
 import json
 import os
-import sys
-
 import subprocess
 import time
 import threading
 import requests
 import base64
-import io
-
 import protected_data
-
-def start_ollama_server():
-    subprocess.run(["ollama", "serve"], check=True)
-
-def query_ollama_text(prompt):
-    """Query Ollama with text only"""
-    url = "http://localhost:11434/api/generate"
-    data = {
-        "model": "llava:7b",
-        "prompt": prompt,
-        #"system": "You are a professional English to French translator. Just translate",
-        "stream": False
-    }
-
-    try:
-        response = requests.post(url, json=data)
-        return response.json()["response"]
-    except Exception as e:
-        return f"Error: {str(e)}"
-
-def query_ollama_vision(prompt, image_path):
-    """Query Ollama with text and image"""
-    url = "http://localhost:11434/api/generate"
-
-    # Convert image to base64
-    with open(image_path, "rb") as img_file:
-        img_data = base64.b64encode(img_file.read()).decode()
-
-    data = {
-        "model": "llava:7b",
-        "prompt": prompt,
-        "images": [img_data],
-        "stream": False
-    }
-
-    try:
-        response = requests.post(url, json=data)
-        return response.json()["response"]
-    except Exception as e:
-        return f"Error: {str(e)}"
-
-# ⚠️ Your Python code will be run in a python v3.8.3 environment
 
 IEXEC_OUT = os.getenv('IEXEC_OUT')
 
-computed_json = {}
+server_model_url = "http://localhost:11434/api/generate"
 
-try:
-    messages = []
+def get_app_secret():
+    chatGptApiKey = os.getenv("IEXEC_APP_DEVELOPER_SECRET")
+    if chatGptApiKey:
+        # Replace all characters with '*'
+        redacted_app_secret = '*' * len(chatGptApiKey)
+        print(f"Got an app secret ({redacted_app_secret})!")
+    else:
+        print("App secret is not set")
+    return chatGptApiKey
 
-    args = sys.argv[1:]
-    print(f"Received {len(args)} args")
-    if len(args) > 0:
-        messages.append(" ".join(args))
-
+def parse_protected_data(json_string):
     try:
-        # The protected data mock created for the purpose of this Hello World journey
-        # contains an object with a key "secretText" which is a string
-        protected_text = protected_data.getValue('secretText', 'string')
-        messages.append(protected_text)
+        return json.loads(json_string)
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Invalid JSON data: {e}")
     except Exception as e:
         print('It seems there is an issue with your protected data:', e)
 
-    # YOUR task:
-    # Start server in background
-    server_thread = threading.Thread(target=start_ollama_server, daemon=True)
-    server_thread.start()
+def ollama_server_command():
+    with open(IEXEC_OUT + '/ollama.log', 'w') as f:
+        subprocess.run(
+            ["ollama", "serve"],
+            stdout=f,
+            stderr=f,
+            check=True
+        )
+
+def start_ollama_server():
+    threading.Thread(target=ollama_server_command, daemon=True).start()
     time.sleep(5)
-    text_response = query_ollama_text("Do you know iExec ?")
-    #print(f"Response: {text_response}") 
 
+def query_ollama_text(prompt):
+    """Query Ollama with text only"""
+    data = {
+        "model": "qwen3:8b",
+        "prompt": prompt,
+        "stream": False
+    }
+    try:
+        response = requests.post(server_model_url, json=data)
+        return response.json()["response"]
+    except Exception as e:
+        return f"Error: {str(e)}"
 
-    with open(IEXEC_OUT + '/result.txt', 'w') as f:
-        f.write(text_response)
-    computed_json = {'deterministic-output-path': IEXEC_OUT + '/result.txt'}
-except Exception as e:
-    print(e)
-    computed_json = {'deterministic-output-path': IEXEC_OUT,
-                     'error-message': 'Oops something went wrong'}
-finally:
-    with open(IEXEC_OUT + '/computed.json', 'w') as f:
-        json.dump(computed_json, f)
+def process_data(parsed_content):
+    # Get description from all memories
+    # descriptions = [entry["description"] for entry in parsed_content]
+    # print("Descriptions:", descriptions)
+    prompt = """
+I'm giving you some article content and the instructions will come just after.
+New article content:
+```
+{
+  "v": "1",
+  "datetime": "2025-06-26",
+  "location": "Lyon, France",
+  "images": {
+   "0": "https://cf.ltkcdn.net/family/images/std/200821-800x533r1-family.jpg",
+   "1": "https://www.udel.edu/academics/colleges/canr/cooperative-extension/fact-sheets/building-strong-family-relationships/_jcr_content/par_udel/columngenerator/par_1/image.coreimg.jpeg/1718801838338/family.jpeg"
+  }
+  "title": "Hackathon",
+  "description": "1ère journée au hackathon, ca démarre fort!",
+  "locale": "fr",
+  "emotion": "fun"
+ }
+```
+New article content:
+```
+{
+  "v": "1",
+  "datetime": "2025-06-25",
+  "location": "Villeurbanne, France",
+  "images": {
+   "0": "https://img-4.linternaute.com/mZzMeIW6-NwGfAYVa-5g2t4lNEg=/1080x/smart/3f4c560443a6452fac2676cf0c1e57c0/ccmcms-linternaute/45964290.jpg"
+  },
+  "title": "Météo",
+  "description": "Canicule et orage, c'est la loose",
+  "locale": "fr",
+  "emotion": "il fait trop chaud!"
+ }
+```
+Now I want you to generate a kind of journal with this list of articles, each representing different event or memories of different authors. you need to consider them unrelated. The journal language will be "EN" so translate the article content when needed. The journal will be generated in HTML format in a single page following all instructions. The theme of the journal should be "familly time for a summer party". You need to be really creative like a designer and make effort to make it look nice and fresh. Each article will represent an event. You are allowed to enhance the description to make them match the journal entry. Each article will be represented in a JSON format. You can ignore the "v" field. The "date" field contains the date or datetime of the event. The "locale" field represents the language used for writing the content of the "title" and "description". You can find an "emotion" field expressing what the author was feeling when the event occurred. Use it for your customization of the tone of this journal entry but do not display it back. The "images" field is a list of images URL an dyou should them all in the generate ouput. if necessary pick one as the main on and siplay the other at the end of the article. The "location" field represents the location of the event if filled.
+Please generate the journal in a html code.
+Give me only the html file content and nothing else!
+    """
+    result = query_ollama_text(prompt)
+    print("Result from Ollama:", result)
+    return result
+
+def main():
+    computed_json = {}
+    try:
+        print("Starting Condidly dapp...")
+        get_app_secret()
+        parsed_data = parse_protected_data(protected_data.get("memories.json"))
+        start_ollama_server()
+        # response = process_data(parsed_data)
+        response = "dummy response for testing purposes"
+        with open(IEXEC_OUT + '/result.txt', 'w') as f:
+            f.write(response)
+        computed_json = {'deterministic-output-path': IEXEC_OUT + '/result.txt'}
+    except Exception as e:
+        print(e)
+        computed_json = {'deterministic-output-path': IEXEC_OUT,
+                        'error-message': 'Oops something went wrong'}
+    finally:
+        with open(IEXEC_OUT + '/computed.json', 'w') as f:
+            json.dump(computed_json, f)
+
+if __name__ == "__main__":
+    main()

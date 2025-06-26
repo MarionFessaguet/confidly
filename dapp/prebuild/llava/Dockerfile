@@ -14,8 +14,8 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # Copy your config script into the image
-COPY configure.sh /app/configure.sh
-RUN chmod +x /app/configure.sh
+COPY setup.sh /app/setup.sh
+RUN chmod +x /app/setup.sh
 
 # Run the script during build
-RUN /app/configure.sh
+RUN /app/setup.sh
