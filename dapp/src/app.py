@@ -108,6 +108,93 @@ async def generate_pdf_from_html(html_content, pdf_path):
     
     await browser.close()
 
+def send_email_with_mailjet(recipients, subject, text_content, html_content=None, attachment_path=None, 
+                           sender_email=None, sender_name=None, api_key=None, api_secret=None):
+    """
+    Send an email with optional attachment using Mailjet API.
+    
+    Args:
+        recipients (list): List of recipient email addresses
+        subject (str): Email subject line
+        text_content (str): Plain text email content
+        html_content (str): HTML email content (optional)
+        attachment_path (str): Path to file to attach (optional)
+        sender_email (str): Sender's email address
+        sender_name (str): Sender's name
+        api_key (str): Mailjet API key
+        api_secret (str): Mailjet API secret
+        
+    Returns:
+        dict: Status of the email sending operation
+    """
+    try:
+        # Check if attachment exists
+        attachment_data = None
+        attachment_name = None
+        if attachment_path and os.path.exists(attachment_path):
+            with open(attachment_path, "rb") as file:
+                attachment_data = base64.b64encode(file.read()).decode('utf-8')
+                attachment_name = os.path.basename(attachment_path)
+        elif attachment_path:
+            return {"success": False, "error": f"Attachment file not found: {attachment_path}"}
+        
+        # Prepare recipients list
+        to_emails = [{"Email": email} for email in recipients]
+        
+        # Prepare email data
+        email_data = {
+            "Messages": [
+                {
+                    "From": {
+                        "Email": sender_email,
+                        "Name": sender_name or sender_email
+                    },
+                    "To": to_emails,
+                    "Subject": subject,
+                    "TextPart": text_content
+                }
+            ]
+        }
+        
+        # Add HTML content if provided
+        if html_content:
+            email_data["Messages"][0]["HTMLPart"] = html_content
+        
+        # Add attachment if provided
+        if attachment_data:
+            email_data["Messages"][0]["Attachments"] = [
+                {
+                    "ContentType": "application/octet-stream",
+                    "Filename": attachment_name,
+                    "Base64Content": attachment_data
+                }
+            ]
+        
+        # Send email via Mailjet API
+        url = "https://api.mailjet.com/v3.1/send"
+        auth = (api_key, api_secret)
+        headers = {"Content-Type": "application/json"}
+        
+        response = requests.post(url, json=email_data, auth=auth, headers=headers)
+        
+        if response.status_code == 200:
+            result = response.json()
+            return {
+                "success": True,
+                "message": f"Email sent successfully to {len(recipients)} recipients",
+                "recipients": recipients,
+                "mailjet_response": result,
+                "attachment": attachment_name
+            }
+        else:
+            return {
+                "success": False, 
+                "error": f"Mailjet API error: {response.status_code} - {response.text}"
+            }
+            
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+    
 
 def process_data(parsed_content):
     # Get description from all memories
