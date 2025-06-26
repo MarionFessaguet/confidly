@@ -47,12 +47,13 @@ def query_ollama_vision(prompt, image_path):
     except Exception as e:
         return f"Error: {str(e)}"
 
-def parse_protected_data(json_data):
-    """Parse the protected data JSON and return a dictionary"""
+def parse_protected_data(json_string):
     try:
-        return json.loads(json_data)
+        return json.loads(json_string)
     except json.JSONDecodeError as e:
         raise ValueError(f"Invalid JSON data: {e}")
+    except Exception as e:
+        print('It seems there is an issue with your protected data:', e)
 
 def process_data(parsed_content):
     # Get description from all memories
@@ -66,17 +67,8 @@ def main():
     computed_json = {}
     try:
         print("Starting Condidly dapp...")
-        try:
-            parsed_content = parse_protected_data(protected_data.get("memories.json"))
-            response = process_data(parsed_content)
-        except Exception as e:
-            print('It seems there is an issue with your protected data:', e)
-        # YOUR task:
-        # Start server in background
-        # server_thread = threading.Thread(target=start_ollama_server, daemon=True)
-        # server_thread.start()
-        # time.sleep(5)
-        # text_response = query_ollama_text("Do you know iExec ?")
+        parsed_data = parse_protected_data(protected_data.get("memories.json"))
+        response = process_data(parsed_data)
         with open(IEXEC_OUT + '/result.txt', 'w') as f:
             f.write(response)
         computed_json = {'deterministic-output-path': IEXEC_OUT + '/result.txt'}
