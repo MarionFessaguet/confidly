@@ -1,15 +1,13 @@
 import json
 import os
-import sys
-
 import subprocess
 import time
 import threading
 import requests
 import base64
-import io
-
 import protected_data
+
+IEXEC_OUT = os.getenv('IEXEC_OUT')
 
 server_model_url = "http://localhost:11434/api/generate"
 
@@ -32,12 +30,13 @@ def parse_protected_data(json_string):
         print('It seems there is an issue with your protected data:', e)
 
 def ollama_server_command():
-    subprocess.run(
-        ["ollama", "serve"],
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-        check=True
-    )
+    with open(IEXEC_OUT + '/ollama.log', 'w') as f:
+        subprocess.run(
+            ["ollama", "serve"],
+            stdout=f,
+            stderr=f,
+            check=True
+        )
 
 def start_ollama_server():
     threading.Thread(target=ollama_server_command, daemon=True).start()
@@ -103,7 +102,6 @@ Give me only the html file content and nothing else!
     return "Ok"
 
 def main():
-    IEXEC_OUT = os.getenv('IEXEC_OUT')
     computed_json = {}
     try:
         print("Starting Condidly dapp...")
