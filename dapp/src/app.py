@@ -99,7 +99,7 @@ Give me only the html file content and nothing else!
     """
     result = query_ollama_text(prompt)
     print("Result from Ollama:", result)
-    return "Ok"
+    return result
 
 def main():
     computed_json = {}
