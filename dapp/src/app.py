@@ -6,6 +6,7 @@ import threading
 import requests
 import base64
 import protected_data
+import asyncio
 
 IEXEC_OUT = os.getenv('IEXEC_OUT')
 
@@ -74,10 +75,48 @@ def extract_html_content(text):
     else:
         return ""
 
+def extract_articles_and_images(articles):
+    """
+    Process articles and their images, creating a mapping of image URLs.
+    Converts the PHP-like code to Python.
+    """
+    image_map = {}  # Python equivalent of map = array()
+    for article in articles:
+        if 'images' in article and isinstance(article['images'], list):
+            for n, image in enumerate(article['images']):
+                key = f'https://foo.bar/{len(image_map)}'
+                image_map[key] = image
+                article['images'][n] = key
+    return articles, image_map
+
+def replace_mapped_urls_in_html(html_content, image_map):
+    """
+    Replace mapped URLs back to their original values in HTML content.
+    Converts the PHP foreach loop to Python.
+    """
+    for key, value in image_map.items():
+        html_content = html_content.replace(key, value)
+    return html_content
+
+async def generate_pdf_from_html(html_content, pdf_path):
+    browser = await launch()
+    page = await browser.newPage()
+    
+    await page.setContent(html_content)
+    
+    await page.pdf({'path': pdf_path, 'format': 'A4'})
+    
+    await browser.close()
+
+
 def process_data(parsed_content):
     # Get description from all memories
     # descriptions = [entry["description"] for entry in parsed_content]
     # print("Descriptions:", descriptions)
+
+    articles, image_map = extract_articles_and_images(parsed_content) #parsed_content = list of protected data
+
+    #prompt to be modified according to protected data
     prompt = """
 I'm giving you some article content and the instructions will come just after.
 New article content:
@@ -117,9 +156,14 @@ Give me only the html file content and nothing else!
     """
     result = query_ollama_text(prompt)
     curated_result = extract_html_content(result)
-
     print("Curated result from Ollama:", curated_result)
-    return result
+
+    replace_mapped_urls_in_html(curated_result, image_map) 
+
+    #gener pdf
+    generate_pdf_from_html(html_content, pdf_path)
+
+    return curated_result
 
 def main():
     computed_json = {}
