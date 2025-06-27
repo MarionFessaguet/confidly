@@ -10,7 +10,7 @@ Welcome to Confidly — your privacy-first solution for sharing moments and memo
 
 You can see our product demo here: 
 
-* https://www.loom.com/share/1d74c223fea5419cab65bbf6aa065293?sid=842b470c-3e52-4ffa-9c45-5646bffe5333
+* https://youtu.be/NPaCW-_rCcI
 
 ## How It Works
 
