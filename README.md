@@ -34,8 +34,8 @@ Sample:
     "datetime": "2025-06-26",
     "location": "Lyon, France",
     "images": {
-      "0": "https://foo.bar/1", 
-      "1": "https://foo.bar/2"
+      "0": "<inline content using data URI scheme>", 
+      "1": "<inline content using data URI scheme>"
     }
     "title": "Hackathon",
     "description": "1ère journée au hackathon, ca démarre fort!",
