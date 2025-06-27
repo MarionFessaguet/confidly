@@ -9,12 +9,14 @@ import protected_data
 import asyncio
 import re
 import pdfkit
+import sys
 
 
 
 IEXEC_OUT = os.getenv('IEXEC_OUT')
-
 server_model_url = "http://localhost:11434/api/generate"
+pdf_path = os.path.join(IEXEC_OUT, 'result.pdf')
+
 
 def get_mailjet_api_key():
     mailjet_api_key = os.getenv("IEXEC_APP_DEVELOPER_SECRET")
@@ -67,7 +69,6 @@ def process_data(parsed_content):
     html_content = replace_mapped_urls_in_html(curated_result, image_map)
     with open("file.html", "w") as f:
         f.write(html_content)
-    pdf_path = os.path.join(IEXEC_OUT, 'result.pdf')
     pdfkit.from_file("file.html", pdf_path)
 
     return curated_result
@@ -200,6 +201,41 @@ def send_email_with_mailjet(recipients, subject, text_content, html_content=None
     except Exception as e:
         return {"success": False, "error": str(e)}
 
+def send_email(mailjet_api_secrets, mailjet_recipients):
+    # sprint string "key|...|...." to get the key, secret, email and name
+    mailjet_api_key, mailjet_api_secret, mailjet_sender_email = mailjet_api_secrets.split('|')
+    mailjet_sender_name = 'Confidly'
+
+    # Only send if Mailjet credentials are properly configured
+    if (mailjet_api_key != '' and
+        mailjet_api_secret != '' and
+        mailjet_sender_email != ''):
+
+        mailjet_status = send_email_with_mailjet(
+            recipients=mailjet_recipients,
+            subject="Confidly - Your magazine has arrived!",
+            text_content="Please find the attached document. This email was sent using Confidly.",
+            html_content="""
+            <html>
+                <body>
+                    <h2>Important Document</h2>
+                    <p>Please find the attached document.</p>
+                    <p>This email was sent using <strong>Confidly</strong>.</p>
+                    <p>Best regards,<br>Your Privacy Team</p>
+                </body>
+            </html>
+            """,
+            attachment_path= pdf_path,
+            sender_email=mailjet_sender_email,
+            sender_name=mailjet_sender_name,
+            api_key=mailjet_api_key,
+            api_secret=mailjet_api_secret
+        )
+        print("Mailjet email status:", mailjet_status)
+    else:
+        print("Mailjet credentials not configured. Set MAILJET_API_KEY, MAILJET_API_SECRET, MAILJET_SENDER_EMAIL, and MAILJET_SENDER_NAME environment variables.")
+
+
 def build_prompt(articles):
     intro = """
 I'm giving you some article content and the instructions will come just after.
@@ -223,10 +259,13 @@ def main():
     computed_json = {}
     try:
         print("Starting Confidly dapp...")
-        mailjet_api_key = get_mailjet_api_key()
+        emails = sys.argv[1:]
+        print(f"Received {len(emails)} args")
+        mailjet_api_secrets = get_mailjet_api_key()
         parsed_data = parse_protected_data(protected_data.getValue('memories', 'string'))
         start_ollama_server()
         response = process_data(parsed_data)
+        send_email(mailjet_api_secrets, emails)
         with open(IEXEC_OUT + '/result.html', 'w') as f:
             f.write(response)
         computed_json = {'deterministic-output-path': IEXEC_OUT + '/result.html'}
