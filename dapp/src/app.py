@@ -253,7 +253,6 @@ Please generate the journal in a local html and let me download it.
 
     return (intro + article_blocks + instructions).strip()
 
-
 ### main ###
 def main():
     computed_json = {}
