@@ -1,0 +1,32 @@
+[
+  {
+    "sconifiedImage": "zguesmiiexec/dapp:0.0.2-tdx-5ee2711ac2f2",
+    "appContractAddress": "0xf1612a3EbbB8f9b51B12DA9aAF21ecB8218465BC",
+    "owner": "0x98136F1b5FB37FB64fFfcD25Ff0e30c57391d255",
+    "date": "2025-06-27T06:44:01.018Z"
+  },
+  {
+    "sconifiedImage": "zguesmiiexec/dapp:0.0.1-tdx-c828e350422a",
+    "appContractAddress": "0x16B9cbc178f37b0C6f2d35c7EC87daC6aabb1C05",
+    "owner": "0x98136F1b5FB37FB64fFfcD25Ff0e30c57391d255",
+    "date": "2025-06-26T18:53:20.864Z"
+  },
+  {
+    "sconifiedImage": "zguesmiiexec/dapp:0.0.1-tdx-80e63c9a214b",
+    "appContractAddress": "0xf7A70BE59c315B77433d0f98a62079639829440E",
+    "owner": "0x98136F1b5FB37FB64fFfcD25Ff0e30c57391d255",
+    "date": "2025-06-26T18:24:10.855Z"
+  },
+  {
+    "sconifiedImage": "zguesmiiexec/dapp:0.0.1-tdx-4388e99c0203",
+    "appContractAddress": "0x5115285827D2E3fAF09123a08590D18740045512",
+    "owner": "0x98136F1b5FB37FB64fFfcD25Ff0e30c57391d255",
+    "date": "2025-06-26T18:11:41.893Z"
+  },
+  {
+    "sconifiedImage": "zguesmiiexec/dapp:0.0.1-tdx-d85e5dbd70f1",
+    "appContractAddress": "0xe50a88440bF4039F4C121593F3a42A67a18034f2",
+    "owner": "0x98136F1b5FB37FB64fFfcD25Ff0e30c57391d255",
+    "date": "2025-06-26T16:20:41.196Z"
+  }
+]

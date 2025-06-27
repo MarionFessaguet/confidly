@@ -114,18 +114,22 @@ const Home = () => {
           pageSize: 100,
         });
 
-        const loadedSharedMoments: SharedMoment[] = grantedAccessList.grantedAccess.map((grantedAccess, index) => ({
-          id: grantedAccess.dataset,
-          protectedDataAddress: grantedAccess.dataset,
-          title: `Souvenir partagé ${index + 1}`,
-          author: grantedAccess.owner || "Inconnu",
-          emoji: '📤',
-          grantedAt: new Date().toLocaleDateString("fr-FR"),
-        }));
+        const loadedSharedMoments: SharedMoment[] =
+          grantedAccessList.grantedAccess.map((grantedAccess, index) => ({
+            id: grantedAccess.dataset,
+            protectedDataAddress: grantedAccess.dataset,
+            title: `Souvenir partagé ${index + 1}`,
+            author: grantedAccess.owner || "Inconnu",
+            emoji: "📤",
+            grantedAt: new Date().toLocaleDateString("fr-FR"),
+          }));
 
         setSharedMoments(loadedSharedMoments);
       } catch (error) {
-        console.error('Erreur lors du chargement des souvenirs partagés:', error);
+        console.error(
+          "Erreur lors du chargement des souvenirs partagés:",
+          error
+        );
       }
     };
 
@@ -196,16 +200,18 @@ const Home = () => {
 
       const protectedData = await dataProtectorCore.protectData({
         name: `Souvenir: ${newMoment.title}`,
-        data: dataToProtect,
+        data: {
+          memories: `{"v":"1","datetime":"2025-06-26","location":"Lyon, France","images":{"0":"https://cf.ltkcdn.net/family/images/std/200821-800x533r1-family.jpg","1":"https://www.udel.edu/academics/colleges/canr/cooperative-extension/fact-sheets/building-strong-family-relationships/_jcr_content/par_udel/columngenerator/par_1/image.coreimg.jpeg/1718801838338/family.jpeg"},"title":"Hackathon","description":"1ère journée au hackathon, ca démarre fort!","locale":"fr","emotion":"fun"}`,
+        },
         onStatusUpdate: ({ title, isDone }) => {
           const statusMessages: { [key: string]: string } = {
-            'EXTRACT_DATA_SCHEMA': 'Analyse du schéma des données...',
-            'CREATE_ZIP_FILE': 'Création du fichier compressé...',
-            'CREATE_ENCRYPTION_KEY': 'Génération de la clé de chiffrement...',
-            'ENCRYPT_FILE': 'Chiffrement du fichier...',
-            'UPLOAD_ENCRYPTED_FILE': 'Upload du fichier chiffré...',
-            'DEPLOY_PROTECTED_DATA': 'Déploiement des données protégées...',
-            'PUSH_SECRET_TO_SMS': 'Sécurisation finale...',
+            EXTRACT_DATA_SCHEMA: "Analyse du schéma des données...",
+            CREATE_ZIP_FILE: "Création du fichier compressé...",
+            CREATE_ENCRYPTION_KEY: "Génération de la clé de chiffrement...",
+            ENCRYPT_FILE: "Chiffrement du fichier...",
+            UPLOAD_ENCRYPTED_FILE: "Upload du fichier chiffré...",
+            DEPLOY_PROTECTED_DATA: "Déploiement des données protégées...",
+            PUSH_SECRET_TO_SMS: "Sécurisation finale...",
           };
 
           if (statusMessages[title]) {
@@ -227,7 +233,7 @@ const Home = () => {
         transactionHash: protectedData.transactionHash,
       };
 
-      setMoments(prevMoments => [...prevMoments, moment]);
+      setMoments((prevMoments) => [...prevMoments, moment]);
 
       toast.success("Souvenir protégé créé !", {
         description: `${newMoment.title} est maintenant sécurisé sur iExec`,
@@ -242,7 +248,6 @@ const Home = () => {
         photo: null,
       });
       setCurrentView("home");
-
     } catch (error) {
       console.error("Erreur lors de la création du souvenir:", error);
       toast.error("Erreur de création", {
@@ -272,9 +277,9 @@ const Home = () => {
 
       await dataProtectorCore.grantAccess({
         protectedData: shareData.selectedMoment,
-        authorizedApp: '0x1cb7D4F3FFa203F211e57357D759321C6CE49921', // App par défaut
-        authorizedUser: shareData.walletAddress,
-        numberOfAccess: 1,
+        authorizedApp: "0xf1612a3EbbB8f9b51B12DA9aAF21ecB8218465BC", // App par défaut
+        authorizedUser: "0x98136F1b5FB37FB64fFfcD25Ff0e30c57391d255",
+        numberOfAccess: 100,
       });
 
       toast.success("Souvenir partagé !", {
@@ -284,7 +289,6 @@ const Home = () => {
 
       setShareData({ selectedMoment: "", walletAddress: "" });
       setCurrentView("home");
-
     } catch (error) {
       console.error("Erreur lors du partage:", error);
       toast.error("Erreur de partage", {

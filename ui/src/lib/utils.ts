@@ -14,7 +14,11 @@ export async function getDataProtector(connector: any) {
   if (!web3Provider) {
     throw new Error("Web3 provider is not available. Please connect your wallet.");
   }
-  const dataProtector = new IExecDataProtector(web3Provider);
+  const dataProtector = new IExecDataProtector(web3Provider, {
+    iexecOptions: {
+      smsURL: "https://sms.labs.iex.ec",
+    },
+  });
   return dataProtector;
 }
 export async function getIexec(connector: any) {
