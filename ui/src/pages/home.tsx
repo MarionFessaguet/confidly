@@ -114,18 +114,22 @@ const Home = () => {
           pageSize: 100,
         });
 
-        const loadedSharedMoments: SharedMoment[] = grantedAccessList.grantedAccess.map((grantedAccess, index) => ({
-          id: grantedAccess.dataset,
-          protectedDataAddress: grantedAccess.dataset,
-          title: `Souvenir partagé ${index + 1}`,
-          author: grantedAccess.owner || "Inconnu",
-          emoji: '📤',
-          grantedAt: new Date().toLocaleDateString("fr-FR"),
-        }));
+        const loadedSharedMoments: SharedMoment[] =
+          grantedAccessList.grantedAccess.map((grantedAccess, index) => ({
+            id: grantedAccess.dataset,
+            protectedDataAddress: grantedAccess.dataset,
+            title: `Souvenir partagé ${index + 1}`,
+            author: grantedAccess.owner || "Inconnu",
+            emoji: "📤",
+            grantedAt: new Date().toLocaleDateString("fr-FR"),
+          }));
 
         setSharedMoments(loadedSharedMoments);
       } catch (error) {
-        console.error('Erreur lors du chargement des souvenirs partagés:', error);
+        console.error(
+          "Erreur lors du chargement des souvenirs partagés:",
+          error
+        );
       }
     };
 
@@ -199,13 +203,13 @@ const Home = () => {
         data: dataToProtect,
         onStatusUpdate: ({ title, isDone }) => {
           const statusMessages: { [key: string]: string } = {
-            'EXTRACT_DATA_SCHEMA': 'Analyse du schéma des données...',
-            'CREATE_ZIP_FILE': 'Création du fichier compressé...',
-            'CREATE_ENCRYPTION_KEY': 'Génération de la clé de chiffrement...',
-            'ENCRYPT_FILE': 'Chiffrement du fichier...',
-            'UPLOAD_ENCRYPTED_FILE': 'Upload du fichier chiffré...',
-            'DEPLOY_PROTECTED_DATA': 'Déploiement des données protégées...',
-            'PUSH_SECRET_TO_SMS': 'Sécurisation finale...',
+            EXTRACT_DATA_SCHEMA: "Analyse du schéma des données...",
+            CREATE_ZIP_FILE: "Création du fichier compressé...",
+            CREATE_ENCRYPTION_KEY: "Génération de la clé de chiffrement...",
+            ENCRYPT_FILE: "Chiffrement du fichier...",
+            UPLOAD_ENCRYPTED_FILE: "Upload du fichier chiffré...",
+            DEPLOY_PROTECTED_DATA: "Déploiement des données protégées...",
+            PUSH_SECRET_TO_SMS: "Sécurisation finale...",
           };
 
           if (statusMessages[title]) {
@@ -227,7 +231,7 @@ const Home = () => {
         transactionHash: protectedData.transactionHash,
       };
 
-      setMoments(prevMoments => [...prevMoments, moment]);
+      setMoments((prevMoments) => [...prevMoments, moment]);
 
       toast.success("Souvenir protégé créé !", {
         description: `${newMoment.title} est maintenant sécurisé sur iExec`,
@@ -242,7 +246,6 @@ const Home = () => {
         photo: null,
       });
       setCurrentView("home");
-
     } catch (error) {
       console.error("Erreur lors de la création du souvenir:", error);
       toast.error("Erreur de création", {
@@ -284,7 +287,6 @@ const Home = () => {
 
       setShareData({ selectedMoment: "", walletAddress: "" });
       setCurrentView("home");
-
     } catch (error) {
       console.error("Erreur lors du partage:", error);
       toast.error("Erreur de partage", {
