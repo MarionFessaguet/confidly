@@ -1,5 +1,8 @@
 # Confidly
 
+![Screenshot from 2025-06-27 12-43-41](https://github.com/user-attachments/assets/69a6b24d-9b3b-4592-a9cf-7615a4446461)
+
+
 Welcome to Confidly — your privacy-first solution for sharing moments and memories with the people you trust.
 
 > **Whether within a family or an organization, the same need arises:**  
