@@ -30,7 +30,7 @@ Proof of execution: https://explorer.iex.ec/bellecour/task/0x54a6f8cf6ccf36d4b21
 
 Our current dataset: https://explorer.iex.ec/bellecour/dataset/0xa28fad3875e3a5aacd56a5d72b68cdd9e2c9a47f
 
-Sample:
+Dataset type sample:
 ```
 {
     "v": "1",
