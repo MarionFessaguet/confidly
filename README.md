@@ -95,7 +95,8 @@ The following features are in progress to fully realize our vision:
 
 - UI-based prompt customization — tone and output language selection is ready under the hood (check out the code 😉)  
 - Full integration with Web3Mail — temporary workarounds are in place for now  
-- Allowing editors to select multiple memories simultaneously — we're ready on our side and just awaiting the official release of iExec’s multi-dataset and datapool features  
+- Allowing editors to select multiple memories simultaneously — we're ready on our side and just awaiting the official release of iExec’s multi-dataset and datapool features
+- Allow users to share their memory not only with a specific dApp of a publisher, but a more advanced whitelisting management
 
 ## License
 
