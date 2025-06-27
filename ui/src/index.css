@@ -4,7 +4,7 @@
 
 @theme {
   --color-*: initial;
-
+  --color-confidly-button: #c1cdf6;
   --color-white: #ffffff;
   --color-black: #000000;
 
@@ -101,8 +101,8 @@
 
   --color-text2: #989898;
 
-  --color-primary: var(--color-yellow-400);
-  --color-primary-hover: var(--color-yellow-500);
+  --color-primary: var(--color-confidly-button);
+  --color-primary-hover: var(--color-confidly-button);
   --color-primary-foreground: var(--color-grey-800);
 
   --color-accent: var(--color-grey-100);
@@ -151,12 +151,12 @@
 }
 
 .dark {
-  --color-background: var(--color-grey-900);
+  --color-background: var(--color-green-900);
   --color-foreground: var(--color-grey-50);
   --color-accent: var(--color-grey-800);
   --accent-foreground: var(--color-grey-50);
-  --color-primary: var(--color-yellow-300);
-  --color-primary-hover: var(--color-yellow-400);
+  --color-primary: var(--color-confidly-button);
+  --color-primary-hover: var(--color-confidly-button);
   --border-color: var(--border-color-dark);
 }
 
