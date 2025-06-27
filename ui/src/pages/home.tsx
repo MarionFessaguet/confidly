@@ -411,7 +411,8 @@ const Home = () => {
             protectedData: moment.protectedDataAddress,
             app: '0xf1612a3EbbB8f9b51B12DA9aAF21ecB8218465BC',
             workerpool: 'tdx-labs.pools.iexec.eth',
-            args: `--format=magazine --title="${moment.title}" --emails="${emailsArg}" --theme=auto --enhance=true`,
+            args: `${emailsArg}`,
+
             onStatusUpdate: ({ title, isDone }) => {
               const statusMessages: { [key: string]: string } = {
                 'FETCH_PROTECTED_DATA_ORDERBOOK': 'Accès aux données...',
@@ -510,6 +511,7 @@ const Home = () => {
                 Créer
               </Button>
               <Button
+                color="#c1cdf6"
                 variant={currentView === "share" ? "default" : "ghost"}
                 size="sm"
                 onClick={() => setCurrentView("share")}
@@ -607,7 +609,7 @@ const Home = () => {
                 )}
               </CardContent>
               <div className="flex justify-center space-x-4">
-                <Button onClick={() => setCurrentView("create")} disabled={!connector}>
+                <Button color="#c1cdf6" onClick={() => setCurrentView("create")} disabled={!connector}>
                   <Plus className="h-4 w-4 mr-2" />
                   Nouveau Souvenir
                 </Button>
@@ -787,11 +789,11 @@ const Home = () => {
               <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800">
                 <div className="flex items-center space-x-2 mb-2">
                   <Shield className="h-5 w-5 text-green-600" />
-                  <span className="font-medium text-green-800 dark:text-green-200">
+                  <span className="font-medium">
                     Protection des données avec iExec
                   </span>
                 </div>
-                <p className="text-sm text-green-700 dark:text-green-300">
+                <p className="text-sm ">
                   Vos souvenirs seront chiffrés côté client et stockés de manière sécurisée.
                   Seul vous contrôlez l'accès à vos données.
                 </p>
@@ -883,7 +885,7 @@ const Home = () => {
               </div>
 
               <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded border border-blue-200 dark:border-blue-800">
-                <p className="text-sm text-blue-800 dark:text-blue-200">
+                <p className="text-sm">
                   ℹ️ Le destinataire pourra accéder à ce souvenir et l'inclure dans ses magazines
                 </p>
               </div>
@@ -918,11 +920,11 @@ const Home = () => {
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
             <Card className="p-6 max-w-2xl mx-4 w-full max-h-[80vh] overflow-y-auto border-blue-200 shadow-2xl">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 dark:text-grey-300 text-grey-900">
                   <BookOpen className="h-5 w-5 text-blue-600" />
                   Partager le Magazine
                 </CardTitle>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-grey-800 dark:text-grey-400 mt-1">
                   Ajoutez les adresses emails des personnes avec qui vous souhaitez partager ce magazine personnalisé.
                 </p>
               </CardHeader>
@@ -947,12 +949,12 @@ const Home = () => {
 
                 {/* Sélection des souvenirs */}
                 <div className="bg-gray-50 dark:bg-gray-900/20 p-3 rounded-lg">
-                  <h4 className="font-medium text-sm mb-2">Souvenirs sélectionnés ({selectedSharedMoments.length}) :</h4>
-                  <div className="flex flex-wrap gap-2">
+                  <h4 className="font-medium text-sm mb-2 text-grey-300 dark:text-gray-200">Souvenirs sélectionnés ({selectedSharedMoments.length}) :</h4>
+                  <div className="flex flex-wrap gap-2  text-grey-800 dark:text-grey-200">
                     {sharedMoments
                       .filter(moment => selectedSharedMoments.includes(moment.id))
                       .map(moment => (
-                        <Badge key={moment.id} variant="outline" className="text-xs">
+                        <Badge key={moment.id} variant="outline" className="text-xs text-grey-800 dark:text-grey-500">
                           {moment.emoji} {moment.title}
                         </Badge>
                       ))
@@ -1014,7 +1016,7 @@ const Home = () => {
                 </div>
 
                 {emailList.length === 0 && (
-                  <div className="text-center py-4 text-gray-500 text-sm">
+                  <div className="text-center py-4 text-grey-300 text-sm">
                     Aucun destinataire ajouté. Ajoutez au moins une adresse email.
                   </div>
                 )}
