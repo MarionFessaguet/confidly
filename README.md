@@ -15,6 +15,13 @@ Editors can then compile these shared memories into beautifully designed magazin
 
 Our AI solution allows editors to effortlessly customize layout, tone, language, and more — the possibilities are endless, and above all, completely hassle-free.
 
+
+## Current status
+
+MVP is working both for UI and dAPP level. Some minor glitches remains to link it all, but we're kinda there.
+
+Proof of execution: https://explorer.iex.ec/bellecour/task/0x54a6f8cf6ccf36d4b21a1438edb5162976f1cfe53b28d72741824f46ebdf9f08 
+
 ## Technical Deep Dive
 
 Built on iExec's proven tools, memories are stored as protectedData using DataProtector.
