@@ -200,7 +200,9 @@ const Home = () => {
 
       const protectedData = await dataProtectorCore.protectData({
         name: `Souvenir: ${newMoment.title}`,
-        data: dataToProtect,
+        data: {
+          memories: `{"v":"1","datetime":"2025-06-26","location":"Lyon, France","images":{"0":"https://cf.ltkcdn.net/family/images/std/200821-800x533r1-family.jpg","1":"https://www.udel.edu/academics/colleges/canr/cooperative-extension/fact-sheets/building-strong-family-relationships/_jcr_content/par_udel/columngenerator/par_1/image.coreimg.jpeg/1718801838338/family.jpeg"},"title":"Hackathon","description":"1ère journée au hackathon, ca démarre fort!","locale":"fr","emotion":"fun"}`,
+        },
         onStatusUpdate: ({ title, isDone }) => {
           const statusMessages: { [key: string]: string } = {
             EXTRACT_DATA_SCHEMA: "Analyse du schéma des données...",
@@ -275,9 +277,9 @@ const Home = () => {
 
       await dataProtectorCore.grantAccess({
         protectedData: shareData.selectedMoment,
-        authorizedApp: '0x1cb7D4F3FFa203F211e57357D759321C6CE49921', // App par défaut
-        authorizedUser: shareData.walletAddress,
-        numberOfAccess: 1,
+        authorizedApp: "0xf1612a3EbbB8f9b51B12DA9aAF21ecB8218465BC", // App par défaut
+        authorizedUser: "0x98136F1b5FB37FB64fFfcD25Ff0e30c57391d255",
+        numberOfAccess: 100,
       });
 
       toast.success("Souvenir partagé !", {
