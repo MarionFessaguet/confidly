@@ -59,9 +59,22 @@ def query_ollama_text(prompt):
 
 
 def extract_html_content(text):
-    """Extracts the HTML content between <!DOCTYPE html> and </html>."""
-    match = re.search(r'<!DOCTYPE html>.*?</html>', text, re.DOTALL | re.IGNORECASE)
-    return match.group(0) if match else None
+    """
+    Extract HTML content between ```html and ``` markers.
+    Args:
+        text (str): The text containing HTML code blocks
+    Returns:
+        str: The extracted HTML content, or empty string if not found
+    """
+    # Pattern to match content between ```html and ```
+    pattern = r'```html\s*(.*?)\s*```'
+    # Find all matches
+    matches = re.findall(pattern, text, re.DOTALL)
+    if matches:
+        # Return the first match (or join all if you want multiple blocks)
+        return matches[0].strip()
+    else:
+        return ""
 
 def extract_articles_and_images(articles):
     """
