@@ -8,9 +8,7 @@ Welcome to Confidly — your privacy-first solution for sharing moments and memo
 > **Whether within a family or an organization, the same need arises:**  
 > **A trusted space to share content with those who matter most.**
 
-You can see our product demo here: 
-
-* https://youtu.be/NPaCW-_rCcI
+You can see our product demo here: https://youtu.be/NPaCW-_rCcI and our product brief here: https://www.canva.com/design/DAGrdWYHnAs/Cy5l8JxR0zJMnQwhQ-dZpA/edit
 
 ## How It Works
 
