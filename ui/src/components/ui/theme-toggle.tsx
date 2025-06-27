@@ -8,7 +8,6 @@ export function ThemeToggle({ className }: { className?: string }) {
   const isDark = theme === "dark";
 
   const handleToggle = () => {
-    console.log("object");
     setTheme(isDark ? "light" : "dark");
   };
 
