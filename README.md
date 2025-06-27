@@ -25,6 +25,25 @@ MVP is working both for UI and dAPP level. Some minor glitches remains to link i
 
 Proof of execution: https://explorer.iex.ec/bellecour/task/0x54a6f8cf6ccf36d4b21a1438edb5162976f1cfe53b28d72741824f46ebdf9f08 
 
+Our current dataset: https://explorer.iex.ec/bellecour/dataset/0xa28fad3875e3a5aacd56a5d72b68cdd9e2c9a47f
+
+Sample:
+```
+{
+    "v": "1",
+    "datetime": "2025-06-26",
+    "location": "Lyon, France",
+    "images": {
+      "0": "https://foo.bar/1", 
+      "1": "https://foo.bar/2"
+    }
+    "title": "Hackathon",
+    "description": "1ère journée au hackathon, ca démarre fort!",
+    "locale": "fr",
+    "emotion": "fun"
+}
+```
+
 ## Technical Deep Dive
 
 Built on iExec's proven tools, memories are stored as protectedData using DataProtector.
