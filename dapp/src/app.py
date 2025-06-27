@@ -26,10 +26,8 @@ def get_mailjet_api_key():
 def parse_protected_data(json_string):
     try:
         return json.loads(json_string)
-    except json.JSONDecodeError as e:
-        raise ValueError(f"Invalid JSON data: {e}")
     except Exception as e:
-        print('It seems there is an issue with your protected data:', e)
+        print('Cannot parse your protected data:', e)
 
 def ollama_server_command():
     with open(IEXEC_OUT + '/ollama.log', 'w') as f:
@@ -227,34 +225,7 @@ def main():
     try:
         print("Starting Confidly dapp...")
         mailjet_api_key = get_mailjet_api_key()
-        # parsed_data = parse_protected_data(protected_data.getValue('memories', 'string'))
-        parsed_data = [
-            {
-                "v": "1",
-                "datetime": "2025-06-26",
-                "location": "Lyon, France",
-                "images": {
-                    "0": "https://cf.ltkcdn.net/family/images/std/200821-800x533r1-family.jpg",
-                    "1": "https://www.udel.edu/academics/colleges/canr/cooperative-extension/fact-sheets/building-strong-family-relationships/_jcr_content/par_udel/columngenerator/par_1/image.coreimg.jpeg/1718801838338/family.jpeg"
-                },
-                "title": "Hackathon",
-                "description": "1ère journée au hackathon, ca démarre fort!",
-                "locale": "fr",
-                "emotion": "fun"
-            },
-            {
-                "v": "1",
-                "datetime": "2025-06-25",
-                "location": "Villeurbanne, France",
-                "images": {
-                    "0": "https://img-4.linternaute.com/mZzMeIW6-NwGfAYVa-5g2t4lNEg=/1080x/smart/3f4c560443a6452fac2676cf0c1e57c0/ccmcms-linternaute/45964290.jpg"
-                },
-                "title": "Météo",
-                "description": "Canicule et orage, c'est la loose",
-                "locale": "fr",
-                "emotion": "il fait trop chaud!"
-            }
-        ]
+        parsed_data = parse_protected_data(protected_data.getValue('memories', 'string'))
         start_ollama_server()
         response = process_data(parsed_data)
         with open(IEXEC_OUT + '/result.html', 'w') as f:
