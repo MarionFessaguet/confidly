@@ -100,19 +100,17 @@ The following features are in progress to fully realize our vision:
 
 ## License
 
-MIT License — see the [LICENSE](LICENSE) file for details.
+MIT License
 
 ## Support
 
-- 📧 **Email**: support@your-domain.com  
-- 💬 **Discord**: [Join our Discord community]  
-- 🐛 **Issues**: [GitHub Issues](https://github.com/your-username/iexec-memories/issues)  
-- 📖 **Documentation**: [Project Wiki](https://github.com/your-username/iexec-memories/wiki)  
+- 📧 **Email**: support@confidly.com  
+- 💬 **Discord**: Coming soon
 
 ## Useful Links
 
 - [iExec Documentation](https://docs.iex.ec/)  
-- [DataProtector SDK](https://protecteddata.docs.iex.ec/)  
+- [DataProtector SDK](https://tools.docs.iex.ec/tools/dataProtector/getting-started)  
 
 ---
 
