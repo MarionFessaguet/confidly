@@ -8,6 +8,10 @@ Welcome to Confidly — your privacy-first solution for sharing moments and memo
 > **Whether within a family or an organization, the same need arises:**  
 > **A trusted space to share content with those who matter most.**
 
+You can see our product demo here: 
+
+* https://www.loom.com/share/1d74c223fea5419cab65bbf6aa065293?sid=842b470c-3e52-4ffa-9c45-5646bffe5333
+
 ## How It Works
 
 Confidly is fully verifiable and powered by iExec’s technology stack. iExec is The Trust Layer for DePIN & AI, providing the essential infrastructure for Ownership, Privacy, and Monetization.
@@ -17,6 +21,7 @@ Anyone can create and share memories with trusted editors.
 Editors can then compile these shared memories into beautifully designed magazines, with the help of AI.
 
 Our AI solution allows editors to effortlessly customize layout, tone, language, and more — the possibilities are endless, and above all, completely hassle-free.
+
 
 
 ## Current status
