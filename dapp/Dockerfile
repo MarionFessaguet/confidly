@@ -1,5 +1,7 @@
 FROM python-ollama-qwen3-8b:local
 
+RUN apt-get update && apt-get install -y wkhtmltopdf
+
 WORKDIR /app
 
 COPY requirements.txt ./

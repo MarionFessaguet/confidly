@@ -318,7 +318,7 @@ const Home = () => {
 
       await dataProtectorCore.grantAccess({
         protectedData: shareData.selectedMoment,
-        authorizedApp: "0xf1612a3EbbB8f9b51B12DA9aAF21ecB8218465BC", // App par défaut
+        authorizedApp: "0xec43236C58f92412c921A334124Ce3ff6Ee8CE18", // App par défaut
         authorizedUser: shareData.walletAddress,
         numberOfAccess: 100,
       });

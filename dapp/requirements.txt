@@ -1,3 +1,8 @@
 # requirements must be compatible with python 3.13.3
 requests==2.32.3
 borsh-construct==0.1.0
+pyppeteer==2.0.0
+pdfkit
+# pdfkit requires wkhtmltopdf to be installed on the system
+# You can install it using the following command:
+# sudo apt-get install wkhtmltopdf
