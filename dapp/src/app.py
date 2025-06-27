@@ -8,6 +8,9 @@ import base64
 import protected_data
 import asyncio
 import re
+import pdfkit
+
+
 
 IEXEC_OUT = os.getenv('IEXEC_OUT')
 
@@ -61,8 +64,11 @@ def process_data(parsed_content):
     result = query_ollama_text(prompt)
     curated_result = extract_html_content(result)
     print("Curated result from Ollama:", curated_result)
-    replace_mapped_urls_in_html(curated_result, image_map)
-    #generate_pdf_from_html(curated_result, pdf_path)
+    html_content = replace_mapped_urls_in_html(curated_result, image_map)
+    with open("file.html", "w") as f:
+        f.write(html_content)
+    pdf_path = os.path.join(IEXEC_OUT, 'result.pdf')
+    pdfkit.from_file("file.html", pdf_path)
 
     return curated_result
 
@@ -106,13 +112,6 @@ def replace_mapped_urls_in_html(html_content, image_map):
     for key, value in image_map.items():
         html_content = html_content.replace(key, value)
     return html_content
-
-async def generate_pdf_from_html(html_content, pdf_path):
-    browser = await launch()
-    page = await browser.newPage()
-    await page.setContent(html_content)
-    await page.pdf({'path': pdf_path, 'format': 'A4'})
-    await browser.close()
 
 def send_email_with_mailjet(recipients, subject, text_content, html_content=None, attachment_path=None,
                            sender_email=None, sender_name=None, api_key=None, api_secret=None):
