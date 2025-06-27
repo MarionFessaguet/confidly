@@ -59,44 +59,43 @@ def process_data(parsed_content):
     # Get description from all memories
     # descriptions = [entry["description"] for entry in parsed_content]
     # print("Descriptions:", descriptions)
-    prompt = "Hello there"
-#     prompt = """
-# I'm giving you some article content and the instructions will come just after.
-# New article content:
-# ```
-# {
-#   "v": "1",
-#   "datetime": "2025-06-26",
-#   "location": "Lyon, France",
-#   "images": {
-#    "0": "https://cf.ltkcdn.net/family/images/std/200821-800x533r1-family.jpg",
-#    "1": "https://www.udel.edu/academics/colleges/canr/cooperative-extension/fact-sheets/building-strong-family-relationships/_jcr_content/par_udel/columngenerator/par_1/image.coreimg.jpeg/1718801838338/family.jpeg"
-#   }
-#   "title": "Hackathon",
-#   "description": "1ère journée au hackathon, ca démarre fort!",
-#   "locale": "fr",
-#   "emotion": "fun"
-#  }
-# ```
-# New article content:
-# ```
-# {
-#   "v": "1",
-#   "datetime": "2025-06-25",
-#   "location": "Villeurbanne, France",
-#   "images": {
-#    "0": "https://img-4.linternaute.com/mZzMeIW6-NwGfAYVa-5g2t4lNEg=/1080x/smart/3f4c560443a6452fac2676cf0c1e57c0/ccmcms-linternaute/45964290.jpg"
-#   },
-#   "title": "Météo",
-#   "description": "Canicule et orage, c'est la loose",
-#   "locale": "fr",
-#   "emotion": "il fait trop chaud!"
-#  }
-# ```
-# Now I want you to generate a kind of journal with this list of articles, each representing different event or memories of different authors. you need to consider them unrelated. The journal language will be "EN" so translate the article content when needed. The journal will be generated in HTML format in a single page following all instructions. The theme of the journal should be "familly time for a summer party". You need to be really creative like a designer and make effort to make it look nice and fresh. Each article will represent an event. You are allowed to enhance the description to make them match the journal entry. Each article will be represented in a JSON format. You can ignore the "v" field. The "date" field contains the date or datetime of the event. The "locale" field represents the language used for writing the content of the "title" and "description". You can find an "emotion" field expressing what the author was feeling when the event occurred. Use it for your customization of the tone of this journal entry but do not display it back. The "images" field is a list of images URL an dyou should them all in the generate ouput. if necessary pick one as the main on and siplay the other at the end of the article. The "location" field represents the location of the event if filled.
-# Please generate the journal in a html code.
-# Give me only the html file content and nothing else!
-#     """
+    prompt = """
+I'm giving you some article content and the instructions will come just after.
+New article content:
+```
+{
+  "v": "1",
+  "datetime": "2025-06-26",
+  "location": "Lyon, France",
+  "images": {
+   "0": "https://cf.ltkcdn.net/family/images/std/200821-800x533r1-family.jpg",
+   "1": "https://www.udel.edu/academics/colleges/canr/cooperative-extension/fact-sheets/building-strong-family-relationships/_jcr_content/par_udel/columngenerator/par_1/image.coreimg.jpeg/1718801838338/family.jpeg"
+  }
+  "title": "Hackathon",
+  "description": "1ère journée au hackathon, ca démarre fort!",
+  "locale": "fr",
+  "emotion": "fun"
+ }
+```
+New article content:
+```
+{
+  "v": "1",
+  "datetime": "2025-06-25",
+  "location": "Villeurbanne, France",
+  "images": {
+   "0": "https://img-4.linternaute.com/mZzMeIW6-NwGfAYVa-5g2t4lNEg=/1080x/smart/3f4c560443a6452fac2676cf0c1e57c0/ccmcms-linternaute/45964290.jpg"
+  },
+  "title": "Météo",
+  "description": "Canicule et orage, c'est la loose",
+  "locale": "fr",
+  "emotion": "il fait trop chaud!"
+ }
+```
+Now I want you to generate a kind of journal with this list of articles, each representing different event or memories of different authors. you need to consider them unrelated. The journal language will be "EN" so translate the article content when needed. The journal will be generated in HTML format in a single page following all instructions. The theme of the journal should be "familly time for a summer party". You need to be really creative like a designer and make effort to make it look nice and fresh. Each article will represent an event. You are allowed to enhance the description to make them match the journal entry. Each article will be represented in a JSON format. You can ignore the "v" field. The "date" field contains the date or datetime of the event. The "locale" field represents the language used for writing the content of the "title" and "description". You can find an "emotion" field expressing what the author was feeling when the event occurred. Use it for your customization of the tone of this journal entry but do not display it back. The "images" field is a list of images URL an dyou should them all in the generate ouput. if necessary pick one as the main on and siplay the other at the end of the article. The "location" field represents the location of the event if filled.
+Please generate the journal in a html code.
+Give me only the html file content and nothing else!
+    """
     result = query_ollama_text(prompt)
     print("Result from Ollama:", result)
     return result

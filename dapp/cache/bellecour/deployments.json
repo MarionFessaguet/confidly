@@ -1,5 +1,11 @@
 [
   {
+    "sconifiedImage": "zguesmiiexec/dapp:0.0.1-tdx-980797dcd8ff",
+    "appContractAddress": "0xa473C0B2E9697C1C3b1e3779F32D3efa5060b5A9",
+    "owner": "0x98136F1b5FB37FB64fFfcD25Ff0e30c57391d255",
+    "date": "2025-06-27T07:22:10.633Z"
+  },
+  {
     "sconifiedImage": "zguesmiiexec/dapp:0.0.2-tdx-5ee2711ac2f2",
     "appContractAddress": "0xf1612a3EbbB8f9b51B12DA9aAF21ecB8218465BC",
     "owner": "0x98136F1b5FB37FB64fFfcD25Ff0e30c57391d255",
